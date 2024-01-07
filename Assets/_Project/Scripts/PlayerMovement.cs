@@ -84,8 +84,7 @@ public class PlayerMovement : MonoBehaviour
         dir = new Vector2(xRaw, yRaw);
 
         Walk(dir);
-        anim.SetHorizontalMovement(x, y, rb.velocity.y);
-
+        anim.SetHorizontalMovement(Mathf.Abs(rb.velocity.x), y, rb.velocity.y);
 
         if(walking && !startedWalking && !aud.isPlaying)
         {
