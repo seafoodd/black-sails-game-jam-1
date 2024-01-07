@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -14,19 +15,37 @@ public class PlayerMovement : MonoBehaviour
 
     [Space]
     [Header("Stats")]
-    public float speed = 10;
-    public float jumpForce = 50;
-    public float slideSpeed = 5;
-    public float wallJumpLerp = 10;
-    public float dashSpeed = 20;
+    [SerializeField] private float speed = 10;
+    [SerializeField] private float jumpForce = 50;
+    [SerializeField] private float slideSpeed = 5;
+    [SerializeField] private float wallJumpLerp = 10;
+    [SerializeField] private float dashSpeed = 20;
+    [SerializeField] private float movementSmoothing = 7.5f;
+    [SerializeField] private float jumpBuffer = 0.15f;
+    [SerializeField] private int maxJumpCount;
+    [SerializeField] private int jumpCount;
+    [SerializeField] private float wallJumpForce = 1.5f;
+    [SerializeField] private float airMultiplier;
+    [SerializeField] private float wallJumpVerticalMultiplier;
+    [SerializeField] private float timeBetweenSteps;
 
     [Space]
+    [Header("Audio Effects")]
+    [SerializeField] private AudioSource aud;
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioClip dashSound;
+    [SerializeField] private AudioClip[] walkSounds;
+
+  
+    [Space]
     [Header("Booleans")]
+    [SerializeField] private bool jumpBufferAvailable;
     public bool canMove;
-    //public bool wallGrab;
-    public bool wallJumped;
+    [SerializeField] private bool walking;
+    [SerializeField] private bool wallJumped;
     public bool wallSlide;
-    public bool isDashing;
+    public bool dashing;
+    //public bool wallGrab;
 
     [Space]
 
@@ -42,15 +61,8 @@ public class PlayerMovement : MonoBehaviour
     //public ParticleSystem wallJumpParticle;
     //public ParticleSystem slideParticle;
     private Vector2 dir;
-    [SerializeField] private float movementSmoothing = 7.5f;
-    [SerializeField] private float wallJumpVerticalMultiplier;
     private bool jumping;
-    [SerializeField] private bool jumpBufferAvailable;
-    [SerializeField] private float jumpBuffer = 0.15f;
-    [SerializeField] private int maxJumpCount;
-    [SerializeField] private int jumpCount;
-    [SerializeField] private float wallJumpForce = 1.5f;
-    [SerializeField] private float airMultiplier;
+    private bool startedWalking;
 
     void Start()
     {
@@ -63,6 +75,8 @@ public class PlayerMovement : MonoBehaviour
     
     void Update()
     {
+
+
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
         float xRaw = Input.GetAxisRaw("Horizontal");
@@ -72,23 +86,38 @@ public class PlayerMovement : MonoBehaviour
         Walk(dir);
         anim.SetHorizontalMovement(x, y, rb.velocity.y);
 
-        
+
+        if(walking && !startedWalking && !aud.isPlaying)
+        {
+            startedWalking = true;
+            InvokeRepeating("PlayWalkingSound", 0f, timeBetweenSteps);
+        }
+
         if (!coll.onWall || !canMove || Mathf.Abs(x) < .3f)
         {
             wallSlide = false;
         }
-        
-        if (coll.onGround && !isDashing)
-        {
-            GetComponent<BetterJumping>().enabled = true;
-        }
 
-        if (coll.onGround && !isDashing)
+        if(coll.onGround && !dashing)
         {
             wallJumped = false;
             GetComponent<BetterJumping>().enabled = true;
+
+            if(xRaw != 0) walking = true;
+            else
+            {
+                walking = false;
+                startedWalking = false;
+                CancelInvoke("PlayWalkingSound");
+            }
         }
-        
+        else
+        {
+            walking = false;
+            startedWalking = false;
+            CancelInvoke("PlayWalkingSound");
+        }
+
         //if(!isDashing) rb.gravityScale = 3; // TODO: maybe remove this
 
 
@@ -150,6 +179,16 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    private void PlayWalkingSound()
+    {
+        aud.volume = 0.1f;
+        aud.pitch = 1f;
+        int selectedWalkSound = Random.Range(0, 4);
+        if(rb.velocity.magnitude < 1f) return;
+        aud.PlayOneShot(walkSounds[selectedWalkSound]);
+        Debug.Log($"walking sound, {rb.velocity.x}");
+    }
+
     private void ResetJumpBuffer()
     {
         if(!coll.onGround) jumpBufferAvailable = false;
@@ -164,7 +203,7 @@ public class PlayerMovement : MonoBehaviour
     {
         jumpCount = maxJumpCount;
         hasDashed = false;
-        isDashing = false;
+        dashing = false;
 
         side = anim.sr.flipX ? -1 : 1;
 
@@ -185,7 +224,10 @@ public class PlayerMovement : MonoBehaviour
         Vector2 dir = new Vector2(x, y);
         //rb.velocity += dir.normalized * dashSpeed;
         rb.AddForce(dir.normalized * dashSpeed, ForceMode2D.Impulse);
-        Debug.Log($"{dir.normalized * dashSpeed}, {rb.velocity.magnitude}");
+        aud.volume = 0.5f;
+        aud.pitch = 1.0f;
+        aud.PlayOneShot(dashSound);
+        //Debug.Log($"{dir.normalized * dashSpeed}, {rb.velocity.magnitude}");
         StartCoroutine(DashWait());
     }
 
@@ -199,7 +241,7 @@ public class PlayerMovement : MonoBehaviour
         rb.gravityScale = 0;
         GetComponent<BetterJumping>().enabled = false;
         wallJumped = true;
-        isDashing = true;
+        dashing = true;
 
         yield return new WaitForSeconds(.15f);
 
@@ -207,7 +249,7 @@ public class PlayerMovement : MonoBehaviour
         rb.gravityScale = 3;
         GetComponent<BetterJumping>().enabled = true;
         wallJumped = false;
-        isDashing = false;
+        dashing = false;
     }
 
     IEnumerator GroundDash()
@@ -272,6 +314,19 @@ public class PlayerMovement : MonoBehaviour
         Invoke("ResetJump", .2f);
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.velocity += dir * jumpForce;
+
+        if(wall)
+        {
+            aud.pitch = 1.1f;
+            aud.volume = 0.7f;
+        }
+        else
+        {
+            aud.pitch = 0.9f;
+            aud.volume = 0.6f;
+
+        }
+        aud.PlayOneShot(jumpSound);
 
         //particle.Play();
     }
