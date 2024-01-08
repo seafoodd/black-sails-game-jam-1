@@ -384,7 +384,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Explode()
     {
-        Camera.main.transform.DOShakePosition(.5f, .15f, 14, 90, false, true);
+        Camera.main.transform.DOShakePosition(.5f, .5f, 14);
         deathExplosion.SetActive(true);
         deathExplosion.GetComponent<Animator>().SetTrigger("explode");
         deathExplosion.GetComponent<AudioSource>().Play();

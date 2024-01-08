@@ -34,7 +34,7 @@ public class Rope : MonoBehaviour
         int wireLayer = UnityEngine.LayerMask.NameToLayer("Wire");
 
         Physics.IgnoreLayerCollision(playerLayer, wireLayer);
-        player = GameObject.FindWithTag("Player").transform;
+        player = GameObject.Find("Player Wire Anchor").transform;
         AddPosToRope(new Vector3(4.24f, 8.38f, 0));
     }
     private void Update()
@@ -136,77 +136,6 @@ public class Rope : MonoBehaviour
         Debug.Log($"distances: 1={Vector3.Distance(newRope1Positions[0], newRope1Positions[1])}, 2={Vector3.Distance(newRope2Positions[0], newRope2Positions[1])}");
         Debug.Log($"1 = {newRope1Positions[1]}, 2 = {newRope2Positions[1]}");
     }
-
-    /*private void WireDamaged()
-    {
-        Debug.Log("wire damaged");
-
-        rope.enabled = false;
-        edgeCollider.enabled = false;
-
-        GameObject newRope1 = new GameObject("RopePart1");
-        LineRenderer newRope1LineRenderer = newRope1.AddComponent<LineRenderer>();
-        newRope1.AddComponent<Rigidbody2D>();
-        newRope1.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
-
-        GameObject newRope2 = new GameObject("RopePart2");
-        LineRenderer newRope2LineRenderer = newRope2.AddComponent<LineRenderer>();
-        newRope2.AddComponent<Rigidbody2D>();
-        newRope2.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
-
-        newRope1LineRenderer.positionCount = cutPointIndex + 1;
-        newRope2LineRenderer.positionCount = ropePositions.Count - cutPointIndex;
-
-        // Set positions for new ropes
-        List<Vector3> originalPositionsList = new List<Vector3>(ropePositions);
-        Vector3[] positions1 = originalPositionsList.GetRange(0, cutPointIndex + 1).ToArray();
-        Vector3[] positions2 = originalPositionsList.GetRange(cutPointIndex, ropePositions.Count - cutPointIndex).ToArray();
-
-        newRope1LineRenderer.SetPositions(positions1);
-        newRope2LineRenderer.SetPositions(positions2);
-
-        *//*HingeJoint hinge1 = newRope1.AddComponent<HingeJoint>();
-        hinge1.connectedBody = newRope1.GetComponent<Rigidbody>();
-
-        HingeJoint hinge2 = newRope2.AddComponent<HingeJoint>();
-        hinge2.connectedBody = newRope2.GetComponent<Rigidbody>();*//*
-    }*/
-    /*private void WireDamaged()
-    {
-        Debug.Log("Wire damaged");
-
-        rope.enabled = false;
-        edgeCollider.enabled = false;
-
-        // Create GameObjects for the two rope parts
-        GameObject newRope1 = new GameObject("RopePart1");
-        LineRenderer newRope1LineRenderer = newRope1.AddComponent<LineRenderer>();
-        Rigidbody2D newRope1Rigidbody = newRope1.AddComponent<Rigidbody2D>();
-        newRope1Rigidbody.bodyType = RigidbodyType2D.Kinematic;
-
-        GameObject newRope2 = new GameObject("RopePart2");
-        LineRenderer newRope2LineRenderer = newRope2.AddComponent<LineRenderer>();
-        Rigidbody2D newRope2Rigidbody = newRope2.AddComponent<Rigidbody2D>();
-        newRope2Rigidbody.bodyType = RigidbodyType2D.Kinematic;
-
-        // Set the position count for the new ropes
-        newRope1LineRenderer.positionCount = cutPointIndex + 1;
-        newRope2LineRenderer.positionCount = ropePositions.Count - cutPointIndex;
-
-        // Set positions for new ropes
-        Vector3[] positions1 = ropePositions.GetRange(0, cutPointIndex + 1).ToArray();
-        Vector3[] positions2 = ropePositions.GetRange(cutPointIndex, ropePositions.Count - cutPointIndex).ToArray();
-
-        newRope1LineRenderer.SetPositions(positions1);
-        newRope2LineRenderer.SetPositions(positions2);
-
-        // Configure EdgeCollider2D for the new ropes
-        EdgeCollider2D newRope1EdgeCollider = newRope1.AddComponent<EdgeCollider2D>();
-        newRope1EdgeCollider.points = System.Array.ConvertAll(positions1, v => (Vector2)v);
-
-        EdgeCollider2D newRope2EdgeCollider = newRope2.AddComponent<EdgeCollider2D>();
-        newRope2EdgeCollider.points = System.Array.ConvertAll(positions2, v => (Vector2)v);
-    }*/
 
     private void UpdateEdgeCollider(LineRenderer lineRenderer)
     {
