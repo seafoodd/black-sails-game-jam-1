@@ -5,6 +5,7 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -32,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     [Space]
     [Header("Audio Effects")]
     [SerializeField] private AudioSource aud;
+    [SerializeField] private AudioSource aud2;
     [SerializeField] private AudioClip jumpSound;
     [SerializeField] private AudioClip dashSound;
     [SerializeField] private AudioClip[] walkSounds;
@@ -63,6 +65,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 dir;
     private bool jumping;
     private bool startedWalking;
+    [SerializeField] private GameObject deathExplosion;
+    [SerializeField] private GameObject visual;
+    private bool dead;
 
     void Start()
     {
@@ -75,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
     
     void Update()
     {
-
+        if(dead) return;
 
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
@@ -85,6 +90,12 @@ public class PlayerMovement : MonoBehaviour
 
         Walk(dir);
         anim.SetHorizontalMovement(Mathf.Abs(rb.velocity.x), y, rb.velocity.y);
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            SceneManager.LoadScene(currentSceneName);
+        }
 
         if(walking && !startedWalking && !aud.isPlaying)
         {
@@ -180,11 +191,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void PlayWalkingSound()
     {
-        aud.volume = 0.1f;
-        aud.pitch = 1f;
-        int selectedWalkSound = Random.Range(0, 4);
+        aud2.volume = 0.05f;
+        aud2.pitch = 1.4f;
+        int selectedWalkSound = Random.Range(0, 9);
+        //int selectedWalkSound = 0;
         if(rb.velocity.magnitude < 1f) return;
-        aud.PlayOneShot(walkSounds[selectedWalkSound]);
+        aud2.PlayOneShot(walkSounds[selectedWalkSound]);
         Debug.Log($"walking sound, {rb.velocity.x}");
     }
 
@@ -314,6 +326,7 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.velocity += dir * jumpForce;
 
+        aud.Stop();
         if(wall)
         {
             aud.pitch = 1.1f;
@@ -345,5 +358,27 @@ public class PlayerMovement : MonoBehaviour
     void RigidbodyDrag(float x)
     {
         rb.drag = x;
+    }
+
+    public void OnDeath()
+    {
+        dead = true;
+        DOVirtual.Float(rb.rotation, rb.rotation - side * 90, .5f, PlayerRotation);
+
+        Invoke("Explode", .75f);
+    }
+
+    private void Explode()
+    {
+        Camera.main.transform.DOShakePosition(.5f, .15f, 14, 90, false, true);
+        deathExplosion.SetActive(true);
+        deathExplosion.GetComponent<Animator>().SetTrigger("explode");
+        deathExplosion.GetComponent<AudioSource>().Play();
+        visual.SetActive(false);
+    }
+
+    void PlayerRotation(float x)
+    {
+        rb.rotation = x;
     }
 }

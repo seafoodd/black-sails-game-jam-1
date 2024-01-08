@@ -22,11 +22,11 @@ public class AnimationScript : MonoBehaviour
     void Update()
     {
         anim.SetBool("onGround", coll.onGround);
-        anim.SetBool("onWall", coll.onWall);
-        anim.SetBool("onRightWall", coll.onRightWall);
-        anim.SetBool("wallSlide", pm.wallSlide);
+        //anim.SetBool("onWall", coll.onWall);
+        //anim.SetBool("onRightWall", coll.onRightWall);
+        //anim.SetBool("wallSlide", pm.wallSlide);
         anim.SetBool("canMove", pm.canMove);
-        anim.SetBool("isDashing", pm.dashing);
+        //anim.SetBool("isDashing", pm.dashing);
     }
 
     public void SetHorizontalMovement(float x,float y, float yVel)
