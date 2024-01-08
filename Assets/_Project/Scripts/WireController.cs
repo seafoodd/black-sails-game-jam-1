@@ -35,6 +35,7 @@ public class Rope : MonoBehaviour
 
         Physics.IgnoreLayerCollision(playerLayer, wireLayer);
         player = GameObject.Find("Player Wire Anchor").transform;
+        pm = player.GetComponentInParent<PlayerMovement>();
         AddPosToRope(new Vector3(4.24f, 8.38f, 0));
     }
     private void Update()
