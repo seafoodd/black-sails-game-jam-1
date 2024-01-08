@@ -93,8 +93,7 @@ public class PlayerMovement : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.R))
         {
-            string currentSceneName = SceneManager.GetActiveScene().name;
-            SceneManager.LoadScene(currentSceneName);
+            ReloadScene();
         }
 
         if(walking && !startedWalking && !aud.isPlaying)
@@ -362,10 +361,25 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnDeath()
     {
+        if(dead) return;
         dead = true;
-        DOVirtual.Float(rb.rotation, rb.rotation - side * 90, .5f, PlayerRotation);
+        //DOVirtual.Float(rb.rotation, rb.rotation - side * 90, .5f, PlayerRotation);
+        float x = 0;
+        float y = 0;
+        float xRaw = 0;
+        float yRaw = 0;
+        dir = Vector2.zero;
+        rb.velocity = Vector2.zero;
+        rb.gravityScale = 0;
+        Invoke("Explode", 0);
+    }
 
-        Invoke("Explode", .75f);
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if(other.gameObject.layer == 7)
+        {
+            OnDeath();
+        }
     }
 
     private void Explode()
@@ -375,6 +389,14 @@ public class PlayerMovement : MonoBehaviour
         deathExplosion.GetComponent<Animator>().SetTrigger("explode");
         deathExplosion.GetComponent<AudioSource>().Play();
         visual.SetActive(false);
+
+        Invoke("ReloadScene", 1.5f);
+    }
+
+    private void ReloadScene()
+    {
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene(currentSceneName);
     }
 
     void PlayerRotation(float x)
