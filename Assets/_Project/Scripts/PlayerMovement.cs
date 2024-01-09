@@ -223,9 +223,9 @@ public class PlayerMovement : MonoBehaviour
     {
         float y = rb.velocity.y;
         Debug.Log($"y velocity: {y}");
+        jetpackFuel -= Time.deltaTime;
         if(y < 10)
         {
-            jetpackFuel -= 10f * Time.deltaTime;
             rb.velocity += new Vector2(0f, jetpackForce * Time.deltaTime);
         }
     }
@@ -362,8 +362,9 @@ public class PlayerMovement : MonoBehaviour
         if (jumpCount <= 0/* && !wall*/ && !jumpBufferAvailable) return;
         jumpBufferAvailable = false;
         jumping = true;
+        anim.SetBool("jumping", true);
         if(!jumpingFromSurface) jumpCount--;
-        Invoke("ResetJump", .2f);
+        Invoke("ResetJump", .5f);
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.velocity += dir * jumpForce;
 
@@ -387,6 +388,7 @@ public class PlayerMovement : MonoBehaviour
     private void ResetJump()
     {
         jumping = false;
+        anim.SetBool("jumping", false);
     }
 
     IEnumerator DisableMovement(float time)

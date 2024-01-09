@@ -68,7 +68,7 @@ public class Rope : MonoBehaviour
         {
             //hit.transform.position = new Vector3(21.89f, 5.99f, 0);
             //Debug.Log($"hit: {hit.collider}, {hit.point}, {rope.GetPosition(ropePositions.Count - 2)}, {collMask}");
-            if(Math.Abs(Vector2.Distance(rope.GetPosition(ropePositions.Count - 2), hit.point)) > minCollisionDistance || hit.collider.gameObject.CompareTag("Unsnappable"))
+            if(Math.Abs(Vector2.Distance(rope.GetPosition(ropePositions.Count - 2), hit.point)) > minCollisionDistance)
             {
                 if(hit.collider.gameObject.layer == 7)
                 {
