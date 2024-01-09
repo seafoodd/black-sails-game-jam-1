@@ -68,6 +68,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject deathExplosion;
     [SerializeField] private GameObject visual;
     private bool dead;
+    [SerializeField] private ParticleSystem wheelParticles;
+    [SerializeField] private float jetpackFuel;
+    [SerializeField] private float jetpackForce;
+    [SerializeField] private bool jetpackEnabled;
+    [SerializeField] private float maxSpeed;
 
     void Start()
     {
@@ -75,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<AnimationScript>();
 
-        rb.gravityScale = 3f;
+        rb.gravityScale = 2.5f;
     }
     
     void Update()
@@ -89,6 +94,18 @@ public class PlayerMovement : MonoBehaviour
         dir = new Vector2(xRaw, yRaw);
 
         Walk(dir);
+        
+        if(jetpackEnabled)
+        {
+            rb.gravityScale = 1.5f;
+            Jetpack();
+        }
+
+        else
+        {
+            rb.gravityScale = 2.5f;
+        }
+
         anim.SetHorizontalMovement(Mathf.Abs(rb.velocity.x), y, rb.velocity.y);
 
         if(Input.GetKeyDown(KeyCode.R))
@@ -100,16 +117,17 @@ public class PlayerMovement : MonoBehaviour
         {
             startedWalking = true;
             InvokeRepeating("PlayWalkingSound", 0f, timeBetweenSteps);
+            wheelParticles.enableEmission = true;
         }
 
-        if (!coll.onWall || !canMove || Mathf.Abs(x) < .3f)
+        /*if (!coll.onWall || !canMove || Mathf.Abs(x) < .3f)
         {
             wallSlide = false;
-        }
+        }*/
 
-        if(coll.onGround && !dashing)
+        if(coll.onGround/* && !dashing*/)
         {
-            wallJumped = false;
+            //wallJumped = false;
             GetComponent<BetterJumping>().enabled = true;
 
             if(xRaw != 0) walking = true;
@@ -118,6 +136,7 @@ public class PlayerMovement : MonoBehaviour
                 walking = false;
                 startedWalking = false;
                 CancelInvoke("PlayWalkingSound");
+                wheelParticles.enableEmission = false;
             }
         }
         else
@@ -125,37 +144,48 @@ public class PlayerMovement : MonoBehaviour
             walking = false;
             startedWalking = false;
             CancelInvoke("PlayWalkingSound");
+            wheelParticles.enableEmission = false;
         }
 
         //if(!isDashing) rb.gravityScale = 3; // TODO: maybe remove this
 
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !hasDashed)
+        /*if (Input.GetKeyDown(KeyCode.LeftShift) && !hasDashed)
         {
             if(xRaw != 0 || yRaw != 0)
                 Dash(xRaw, yRaw);
-        }
+        }*/
         
-        if(coll.onWall && !coll.onGround && !jumping)
+        /*if(coll.onWall && !coll.onGround && !jumping)
         {
             if (xRaw != 0)
             {
                 wallSlide = true;
                 WallSlide();
             }
-        }
+        }*/
         
-        if (!coll.onWall || coll.onGround)
-            wallSlide = false;
+        /*if (!coll.onWall || coll.onGround)
+            wallSlide = false;*/
         
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && coll.onGround && (jumpBufferAvailable || jumpCount > 0))
         {
+            //if (coll.onWall && wallSlide) WallJump();
+            /*else */
             anim.SetTrigger("jump");
-            if (coll.onWall && wallSlide) WallJump();
-            else if (jumpBufferAvailable || jumpCount > 0)
-            {
-                Jump(Vector2.up, false, jumpBufferAvailable);
-            }
+            Jump(Vector2.up, jumpBufferAvailable);
+        }
+        if(Input.GetButtonDown("Jump") && !coll.onGround && jetpackFuel > 0)
+        {
+            anim.SetBool("jetpack", true);
+            jetpackEnabled = true;
+        }
+
+        if(Input.GetButtonUp("Jump") || jetpackFuel <= 0 || coll.onGround)
+        {
+
+            anim.SetBool("jetpack", false);
+            jetpackEnabled = false;
         }
         
         if (coll.onGround && !groundTouch)
@@ -172,7 +202,9 @@ public class PlayerMovement : MonoBehaviour
             groundTouch = false;
         }
 
-        if (!canMove || wallSlide) return;
+        rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxSpeed);
+
+        if (!canMove/* || wallSlide*/) return;
 
         if(xRaw > 0)
         {
@@ -186,6 +218,16 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
+    }
+    private void Jetpack()
+    {
+        float y = rb.velocity.y;
+        Debug.Log($"y velocity: {y}");
+        if(y < 10)
+        {
+            jetpackFuel -= 10f * Time.deltaTime;
+            rb.velocity += new Vector2(0f, jetpackForce * Time.deltaTime);
+        }
     }
 
     private void PlayWalkingSound()
@@ -212,8 +254,8 @@ public class PlayerMovement : MonoBehaviour
     void GroundTouch()
     {
         jumpCount = maxJumpCount;
-        hasDashed = false;
-        dashing = false;
+        //hasDashed = false;
+        //dashing = false;
 
         side = anim.sr.flipX ? -1 : 1;
 
@@ -268,7 +310,7 @@ public class PlayerMovement : MonoBehaviour
         if (coll.onGround) hasDashed = false;
     }
     
-    private void WallJump()
+    /*private void WallJump()
     {
         if ((side == 1 && coll.onRightWall) || side == -1 && !coll.onRightWall)
         {
@@ -285,9 +327,9 @@ public class PlayerMovement : MonoBehaviour
         if (maxJumpCount > 1) jumpCount = 1;
         Jump(wallDir * wallJumpForce, true, true);
         wallJumped = true;
-    }
+    }*/
 
-    private void WallSlide()
+    /*private void WallSlide()
     {
         if(coll.wallSide != side)
             anim.Flip(side * -1);
@@ -303,7 +345,7 @@ public class PlayerMovement : MonoBehaviour
         float push = pushingWall ? 0 : rb.velocity.x;
 
         if(!jumping) rb.velocity = new Vector2(push, -slideSpeed);
-    }
+    }*/
     private void Walk(Vector2 dir)
     {
         if (!canMove) return;
@@ -314,10 +356,10 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = Vector2.Lerp(rb.velocity, targetVelocity, movementSmoothing * Time.deltaTime * (coll.onGround ? 1 : airMultiplier));
     }
 
-    private void Jump(Vector2 dir, bool wall, bool jumpingFromSurface = false)
+    private void Jump(Vector2 dir,/* bool wall,*/ bool jumpingFromSurface = false)
     {
         //ParticleSystem particle = jumpParticle;
-        if (jumpCount <= 0 && !wall && !jumpBufferAvailable) return;
+        if (jumpCount <= 0/* && !wall*/ && !jumpBufferAvailable) return;
         jumpBufferAvailable = false;
         jumping = true;
         if(!jumpingFromSurface) jumpCount--;
@@ -326,17 +368,17 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity += dir * jumpForce;
 
         aud.Stop();
-        if(wall)
+        /*if(wall)
         {
             aud.pitch = 1.1f;
             aud.volume = 0.7f;
         }
         else
         {
-            aud.pitch = 0.9f;
-            aud.volume = 0.6f;
 
-        }
+        }*/
+        aud.pitch = 0.9f;
+        aud.volume = 0.6f;
         aud.PlayOneShot(jumpSound);
 
         //particle.Play();
