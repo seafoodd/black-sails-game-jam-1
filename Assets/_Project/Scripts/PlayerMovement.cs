@@ -68,6 +68,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject deathExplosion;
     [SerializeField] private GameObject visual;
     private bool dead;
+    [SerializeField] private ParticleSystem wheelParticles;
 
     void Start()
     {
@@ -100,6 +101,7 @@ public class PlayerMovement : MonoBehaviour
         {
             startedWalking = true;
             InvokeRepeating("PlayWalkingSound", 0f, timeBetweenSteps);
+            wheelParticles.enableEmission = true;
         }
 
         if (!coll.onWall || !canMove || Mathf.Abs(x) < .3f)
@@ -118,6 +120,7 @@ public class PlayerMovement : MonoBehaviour
                 walking = false;
                 startedWalking = false;
                 CancelInvoke("PlayWalkingSound");
+                wheelParticles.enableEmission = false;
             }
         }
         else
@@ -125,6 +128,7 @@ public class PlayerMovement : MonoBehaviour
             walking = false;
             startedWalking = false;
             CancelInvoke("PlayWalkingSound");
+            wheelParticles.enableEmission = false;
         }
 
         //if(!isDashing) rb.gravityScale = 3; // TODO: maybe remove this
