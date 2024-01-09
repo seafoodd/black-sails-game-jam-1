@@ -40,6 +40,7 @@ public class Rope : MonoBehaviour
         pm = player.GetComponentInParent<PlayerMovement>();
         AddPosToRope(startingPos.position);
     }
+
     private void Update()
     {
         UpdateRopePositions();
@@ -83,18 +84,20 @@ public class Rope : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
+        //WireDamaged(collider.transform.position);
+
         //if(collider.gameObject.layer != spikesLayerMask && collider.gameObject.layer != interactableLayerMask) return;
         //if(collider.gameObject.CompareTag("Player")) return;
         //Debug.Log(collider.gameObject.layer.ToString());
         //if(collider.gameObject.layer == 7) WireDamaged();
-        if(collider.gameObject.layer == interactableLayerMask) Interact();
+        //if(collider.gameObject.layer == interactableLayerMask) Interact();
     }
 
 
-    private void Interact()
+    /*private void Interact()
     {
         Debug.Log("Interact");
-    }
+    }*/
 
     private void WireDamaged(Vector3 _pos)
     {
@@ -136,8 +139,8 @@ public class Rope : MonoBehaviour
 
         pm.OnDeath();
 
-        Debug.Log($"distances: 1={Vector3.Distance(newRope1Positions[0], newRope1Positions[1])}, 2={Vector3.Distance(newRope2Positions[0], newRope2Positions[1])}");
-        Debug.Log($"1 = {newRope1Positions[1]}, 2 = {newRope2Positions[1]}");
+        //Debug.Log($"distances: 1={Vector3.Distance(newRope1Positions[0], newRope1Positions[1])}, 2={Vector3.Distance(newRope2Positions[0], newRope2Positions[1])}");
+        //Debug.Log($"1 = {newRope1Positions[1]}, 2 = {newRope2Positions[1]}");
     }
 
     private void UpdateEdgeCollider(LineRenderer lineRenderer)
@@ -173,7 +176,7 @@ public class Rope : MonoBehaviour
         RaycastHit2D hit3 = Physics2D.Linecast(ropePosB + (ropePos3 - ropePosB).normalized * (linecastBuffer + Vector2.Distance(ropePosB, ropePos3) * .05f), ropePos3, collMask);
 
 
-        Debug.Log($"{hit.collider == null}, {hit1.collider == null}, {hit2.collider == null}, {hit3.collider == null}");
+        //Debug.Log($"{hit.collider == null}, {hit1.collider == null}, {hit2.collider == null}, {hit3.collider == null}");
         if(hit.collider == null && hit1.collider == null && hit2.collider == null && hit3.collider == null)
         {
             //if(hit.point.magnitude == 0) return;
