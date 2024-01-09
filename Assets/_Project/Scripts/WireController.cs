@@ -7,6 +7,7 @@ using UnityEngine;
 public class Rope : MonoBehaviour
 {
     [SerializeField] private Transform player;
+    [SerializeField] private Transform startingPos;
     [SerializeField] private PlayerMovement pm;
     [SerializeField] private LineRenderer rope;
     [SerializeField] private EdgeCollider2D edgeCollider;
@@ -21,22 +22,23 @@ public class Rope : MonoBehaviour
     private Vector3 ropePos3;
     [SerializeField] private LayerMask spikesLayerMask;
     [SerializeField] private LayerMask interactableLayerMask;
-    [SerializeField] private LayerMask wireLayerMask;
-    [SerializeField] private int cutPointIndex;
+    //[SerializeField] private LayerMask wireLayerMask;
     private bool wireHasBeenDamaged;
     [SerializeField] private Material defaultMaterial;
+    [SerializeField] private bool snapping;
 
     public List<Vector3> ropePositions { get; set; } = new List<Vector3>();
 
     private void Awake()
     {
+        Application.targetFrameRate = -1;
         int playerLayer = UnityEngine.LayerMask.NameToLayer("Player");
         int wireLayer = UnityEngine.LayerMask.NameToLayer("Wire");
 
-        Physics.IgnoreLayerCollision(playerLayer, wireLayer);
+        //Physics.IgnoreLayerCollision(playerLayer, wireLayer);
         player = GameObject.Find("Player Wire Anchor").transform;
         pm = player.GetComponentInParent<PlayerMovement>();
-        AddPosToRope(new Vector3(4.24f, 8.38f, 0));
+        AddPosToRope(startingPos.position);
     }
     private void Update()
     {
@@ -66,7 +68,7 @@ public class Rope : MonoBehaviour
         {
             //hit.transform.position = new Vector3(21.89f, 5.99f, 0);
             //Debug.Log($"hit: {hit.collider}, {hit.point}, {rope.GetPosition(ropePositions.Count - 2)}, {collMask}");
-            if(System.Math.Abs(Vector2.Distance(rope.GetPosition(ropePositions.Count - 2), hit.point)) > minCollisionDistance)
+            if(Math.Abs(Vector2.Distance(rope.GetPosition(ropePositions.Count - 2), hit.point)) > minCollisionDistance || hit.collider.gameObject.CompareTag("Unsnappable"))
             {
                 if(hit.collider.gameObject.layer == 7)
                 {
@@ -74,7 +76,7 @@ public class Rope : MonoBehaviour
                     return;
                 }
                 ropePositions.RemoveAt(ropePositions.Count - 1);
-                AddPosToRope(hit.point);
+                AddPosToRope(hit.point, hit.collider.gameObject.CompareTag("Unsnappable"));
             }
         }
     }
@@ -162,9 +164,16 @@ public class Rope : MonoBehaviour
         ropePos3 = ropePosC + (ropePosA - ropePosC).normalized * (Vector3.Distance(ropePosC, ropePosA) * 0.75f);
 
         RaycastHit2D hit = Physics2D.Linecast(ropePosA, ropePosC + (ropePosA - ropePosC).normalized * linecastBuffer, collMask);
-        RaycastHit2D hit1 = Physics2D.Linecast(ropePosB + ((ropePosA - ropePosB) + (ropePosC - ropePosB)).normalized * linecastBuffer, ropePos1, collMask);
-        RaycastHit2D hit2 = Physics2D.Linecast(ropePosB + ((ropePosA - ropePosB) + (ropePosC - ropePosB)).normalized * linecastBuffer, ropePos2, collMask);
-        RaycastHit2D hit3 = Physics2D.Linecast(ropePosB + ((ropePosA - ropePosB) + (ropePosC - ropePosB)).normalized * linecastBuffer, ropePos3, collMask);
+        //RaycastHit2D hit1 = Physics2D.Linecast(ropePosB + ((ropePosA - ropePosB) + (ropePosC - ropePosB) / 2).normalized * linecastBuffer, ropePos1, collMask);
+        //RaycastHit2D hit2 = Physics2D.Linecast(ropePosB + ((ropePosA - ropePosB) + (ropePosC - ropePosB) / 2).normalized * linecastBuffer, ropePos2, collMask);
+        //RaycastHit2D hit3 = Physics2D.Linecast(ropePosB + ((ropePosA - ropePosB) + (ropePosC - ropePosB) / 2).normalized * linecastBuffer, ropePos3, collMask);
+
+        RaycastHit2D hit1 = Physics2D.Linecast(ropePosB + (ropePos1 - ropePosB).normalized * (linecastBuffer + Vector2.Distance(ropePosB, ropePos1) * .05f), ropePos1, collMask);
+        RaycastHit2D hit2 = Physics2D.Linecast(ropePosB + (ropePos2 - ropePosB).normalized * (linecastBuffer + Vector2.Distance(ropePosB, ropePos2) * .05f), ropePos2, collMask);
+        RaycastHit2D hit3 = Physics2D.Linecast(ropePosB + (ropePos3 - ropePosB).normalized * (linecastBuffer + Vector2.Distance(ropePosB, ropePos3) * .05f), ropePos3, collMask);
+
+
+        Debug.Log($"{hit.collider == null}, {hit1.collider == null}, {hit2.collider == null}, {hit3.collider == null}");
         if(hit.collider == null && hit1.collider == null && hit2.collider == null && hit3.collider == null)
         {
             //if(hit.point.magnitude == 0) return;
@@ -181,15 +190,22 @@ public class Rope : MonoBehaviour
             Gizmos.DrawLine(ropePosA, ropePosB);
             Gizmos.DrawLine(ropePosB, ropePosC);
             Gizmos.DrawLine(ropePosC, ropePosA);
-            Gizmos.DrawLine(ropePosB, ropePos1);
-            Gizmos.DrawLine(ropePosB, ropePos2);
-            Gizmos.DrawLine(ropePosB, ropePos3);
+            //Gizmos.DrawLine(ropePosB, ropePos1);
+            //Gizmos.DrawLine(ropePosB, ropePos2);
+            //Gizmos.DrawLine(ropePosB, ropePos3);
+            //Gizmos.DrawLine(ropePosB + ((ropePosA - ropePosB) + (ropePosC - ropePosB) / 2).normalized * linecastBuffer, ropePos1);
+            //Gizmos.DrawLine(ropePosB + ((ropePosA - ropePosB) + (ropePosC - ropePosB) / 2).normalized * linecastBuffer, ropePos2);
+            //Gizmos.DrawLine(ropePosB + ((ropePosA - ropePosB) + (ropePosC - ropePosB) / 2).normalized * linecastBuffer, ropePos3);
+
+            Gizmos.DrawLine(ropePosB + (ropePos1 - ropePosB).normalized * (linecastBuffer + Vector2.Distance(ropePosB, ropePos1) * .05f), ropePos1);
+            Gizmos.DrawLine(ropePosB + (ropePos2 - ropePosB).normalized * (linecastBuffer + Vector2.Distance(ropePosB, ropePos2) * .05f), ropePos2);
+            Gizmos.DrawLine(ropePosB + (ropePos3 - ropePosB).normalized * (linecastBuffer + Vector2.Distance(ropePosB, ropePos3) * .05f), ropePos3);
         }
     }
 
-    private void AddPosToRope(Vector3 _pos)
+    private void AddPosToRope(Vector3 _pos, bool unsnappable = true)
     {
-        _pos = Vector3Int.RoundToInt(_pos);
+        if(snapping && !unsnappable) _pos = Vector3Int.RoundToInt(_pos);
         ropePositions.Add(_pos);
         ropePositions.Add(player.position); //Always the last pos must be the player
     }
