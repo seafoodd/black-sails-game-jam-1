@@ -41,6 +41,11 @@ public class AnimationScript : MonoBehaviour
         anim.SetTrigger(trigger);
     }
 
+    public void SetBool(string name, bool value)
+    {
+        anim.SetBool(name, value);
+    }
+
     public void Flip(int side)
     {
         if (pm.wallSlide)
