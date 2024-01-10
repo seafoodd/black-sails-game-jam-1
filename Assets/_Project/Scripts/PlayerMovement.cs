@@ -222,7 +222,7 @@ public class PlayerMovement : MonoBehaviour
     private void Jetpack()
     {
         float y = rb.velocity.y;
-        Debug.Log($"y velocity: {y}");
+        //Debug.Log($"y velocity: {y}");
         jetpackFuel -= Time.deltaTime;
         if(y < 10)
         {
@@ -238,7 +238,7 @@ public class PlayerMovement : MonoBehaviour
         //int selectedWalkSound = 0;
         if(rb.velocity.magnitude < 1f) return;
         aud2.PlayOneShot(walkSounds[selectedWalkSound]);
-        Debug.Log($"walking sound, {rb.velocity.x}");
+        //Debug.Log($"walking sound, {rb.velocity.x}");
     }
 
     private void ResetJumpBuffer()
