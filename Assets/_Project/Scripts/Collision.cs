@@ -25,7 +25,8 @@ public class Collision : MonoBehaviour
     
 	void Update()
 	{  
-		onGround = Physics2D.OverlapCircle((Vector2)transform.position + bottomOffset, collisionRadius, groundLayer);
+		onGround = Physics2D.OverlapBox((Vector2)transform.position + bottomOffset, new Vector2(.8f, collisionRadius * 2), 0, groundLayer);
+		Debug.Log(onGround);
 		onWall = Physics2D.OverlapCircle((Vector2)transform.position + rightOffset, collisionRadius, groundLayer) || Physics2D.OverlapCircle((Vector2)transform.position + leftOffset, collisionRadius, groundLayer);
 		onRightWall = Physics2D.OverlapCircle((Vector2)transform.position + rightOffset, collisionRadius, groundLayer);
 		onLeftWall = Physics2D.OverlapCircle((Vector2)transform.position + leftOffset, collisionRadius, groundLayer);
@@ -37,7 +38,7 @@ public class Collision : MonoBehaviour
 	{
 		Gizmos.color = debugCollisionColor;
         
-		Gizmos.DrawWireSphere((Vector2)transform.position  + bottomOffset, collisionRadius);
+		Gizmos.DrawWireCube((Vector2)transform.position  + bottomOffset, new Vector2(.8f, collisionRadius * 2));
 		Gizmos.DrawWireSphere((Vector2)transform.position + rightOffset, collisionRadius);
 		Gizmos.DrawWireSphere((Vector2)transform.position + leftOffset, collisionRadius);
 	}

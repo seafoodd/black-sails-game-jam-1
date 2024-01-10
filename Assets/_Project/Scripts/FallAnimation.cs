@@ -8,7 +8,7 @@ public class FallAnimation : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Debug.Log($"animation started");
+        //Debug.Log($"animation started");
         animator.SetBool("fallAnimPlaying", true);
     }
 
@@ -21,7 +21,7 @@ public class FallAnimation : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Debug.Log($"animation ended");
+        //Debug.Log($"animation ended");
         animator.SetBool("fallAnimPlaying", false);
     }
 

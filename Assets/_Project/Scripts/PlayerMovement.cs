@@ -181,7 +181,7 @@ public class PlayerMovement : MonoBehaviour
             jetpackEnabled = true;
         }
 
-        if(Input.GetButtonUp("Jump") || jetpackFuel <= 0 || coll.onGround)
+        if(!Input.GetButton("Jump") || jetpackFuel <= 0 || coll.onGround)
         {
 
             anim.SetBool("jetpack", false);
