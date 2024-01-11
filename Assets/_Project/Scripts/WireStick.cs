@@ -14,15 +14,15 @@ public class WireStick : MonoBehaviour
     {
         wc = GameObject.Find("Wire").GetComponent<WireController>();
         anchorPos = anchor.position;
-        Debug.Log($"anchor pos: {anchorPos}");
+        //Debug.Log($"anchor pos: {anchorPos}");
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if(holdingWire) return;
-        Debug.Log("wire stick");
+
         wc.AddPosToRope(anchorPos, true, false);
-        //wc.AddPosToRope(anchorPos, true, false);
         holdingWire = true;
+        //Debug.Log("wire stick");
     }
 }
