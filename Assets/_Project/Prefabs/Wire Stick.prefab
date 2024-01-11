@@ -133,7 +133,7 @@ BoxCollider2D:
     m_Bits: 512
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 264
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -161,7 +161,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.08816732, y: 0.015831828}
+  m_Size: {x: 0.36, y: 0.14}
   m_EdgeRadius: 0
 --- !u!114 &2037702510675648485
 MonoBehaviour:
