@@ -4,7 +4,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Rope : MonoBehaviour
+public class WireController : MonoBehaviour
 {
     [SerializeField] private Transform player;
     [SerializeField] private Transform startingPos;
@@ -28,6 +28,7 @@ public class Rope : MonoBehaviour
     [SerializeField] private bool snapping;
 
     public List<Vector3> ropePositions { get; set; } = new List<Vector3>();
+    public List<bool> ropePositionsStatus { get; set; } = new List<bool>();
 
     private void Awake()
     {
@@ -76,7 +77,8 @@ public class Rope : MonoBehaviour
                     WireDamaged(hit.point);
                     return;
                 }
-                ropePositions.RemoveAt(ropePositions.Count - 1);
+                //ropePositions.RemoveAt(ropePositions.Count - 1);
+                //ropePositionsStatus.RemoveAt(ropePositionsStatus.Count - 1);
                 AddPosToRope(hit.point, hit.collider.gameObject.CompareTag("Unsnappable"));
             }
         }
@@ -103,6 +105,7 @@ public class Rope : MonoBehaviour
     {
         wireHasBeenDamaged = true;
         ropePositions.RemoveAt(ropePositions.Count - 1);
+        ropePositionsStatus.RemoveAt(ropePositionsStatus.Count - 1);
         //ropePositions.Add(_pos);
 
         GameObject newRope1 = new GameObject("RopePart1");
@@ -180,8 +183,12 @@ public class Rope : MonoBehaviour
         if(hit.collider == null && hit1.collider == null && hit2.collider == null && hit3.collider == null)
         {
             //if(hit.point.magnitude == 0) return;
-            ropePositions.RemoveAt(ropePositions.Count - 2);
-            return;
+            if(!ropePositionsStatus[ropePositionsStatus.Count - 2])
+            {
+                ropePositions.RemoveAt(ropePositions.Count - 2);
+                ropePositionsStatus.RemoveAt(ropePositionsStatus.Count - 2);
+            }
+            //return;
         }
     }
 
@@ -206,11 +213,18 @@ public class Rope : MonoBehaviour
         }
     }
 
-    private void AddPosToRope(Vector3 _pos, bool unsnappable = true)
+    public void AddPosToRope(Vector3 _pos, bool unsnappable = true, bool removable = true)
     {
         if(snapping && !unsnappable) _pos = Vector3Int.RoundToInt(_pos);
+        if(ropePositions.Count > 0)
+        {
+            ropePositions.RemoveAt(ropePositions.Count - 1);
+            ropePositionsStatus.RemoveAt(ropePositionsStatus.Count - 1);
+        }
         ropePositions.Add(_pos);
+        ropePositionsStatus.Add(!removable);
         ropePositions.Add(player.position); //Always the last pos must be the player
+        ropePositionsStatus.Add(!removable);
     }
 
     private void UpdateRopePositions()
