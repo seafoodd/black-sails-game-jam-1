@@ -79,6 +79,7 @@ public class WireController : MonoBehaviour
                 }
                 //ropePositions.RemoveAt(ropePositions.Count - 1);
                 //ropePositionsStatus.RemoveAt(ropePositionsStatus.Count - 1);
+                Debug.Log($"WTAY, {rope.GetPosition(ropePositions.Count - 2)}, {hit.point}");
                 AddPosToRope(hit.point, hit.collider.gameObject.CompareTag("Unsnappable"));
             }
         }
