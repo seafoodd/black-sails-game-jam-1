@@ -37,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private AudioClip jumpSound;
     [SerializeField] private AudioClip dashSound;
     [SerializeField] private AudioClip[] walkSounds;
+    [SerializeField] private AudioClip[] jetpackSounds;
 
   
     [Space]
@@ -75,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float maxSpeed;
     private string currentSceneName;
     private bool animationPlaying;
+    [SerializeField] private float timeBetweenJetpackSounds;
 
     void Awake()
     {
@@ -181,13 +183,15 @@ public class PlayerMovement : MonoBehaviour
         }
         if(Input.GetButtonDown("Jump") && !coll.onGround && jetpackFuel > 0)
         {
+            InvokeRepeating("PlayJetpackSound", 0f, timeBetweenJetpackSounds);
             anim.SetBool("jetpack", true);
             jetpackEnabled = true;
         }
 
-        if(!Input.GetButton("Jump") || jetpackFuel <= 0 || coll.onGround)
+        if((!Input.GetButton("Jump") || jetpackFuel <= 0 || coll.onGround) && !walking)
         {
-
+            CancelInvoke("PlayJetpackSound");
+            aud2.Stop();
             anim.SetBool("jetpack", false);
             jetpackEnabled = false;
         }
@@ -238,10 +242,20 @@ public class PlayerMovement : MonoBehaviour
     {
         aud2.volume = 0.05f;
         aud2.pitch = 1.4f;
-        int selectedWalkSound = Random.Range(0, 9);
+        int selectedSound = Random.Range(0, walkSounds.Length);
         //int selectedWalkSound = 0;
         if(rb.velocity.magnitude < 1f) return;
-        aud2.PlayOneShot(walkSounds[selectedWalkSound]);
+        aud2.PlayOneShot(walkSounds[selectedSound]);
+        //Debug.Log($"walking sound, {rb.velocity.x}");
+    }
+
+    private void PlayJetpackSound()
+    {
+        aud2.volume = 0.07f;
+        aud2.pitch = 1f;
+        int selectedSound = Random.Range(0, jetpackSounds.Length);
+        //int selectedWalkSound = 0;
+        aud2.PlayOneShot(jetpackSounds[selectedSound]);
         //Debug.Log($"walking sound, {rb.velocity.x}");
     }
 
