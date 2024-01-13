@@ -9,6 +9,10 @@ public class WireStick : MonoBehaviour
     [SerializeField] private Transform anchor;
     [SerializeField] private WireController wc;
     [SerializeField] private bool holdingWire;
+    [SerializeField] private SpriteRenderer wireStick;
+    [SerializeField] private SpriteRenderer wireStickTopLayer;
+    [SerializeField] private Sprite wireStickHolding;
+    [SerializeField] private Sprite wireStickHoldingTopLayer;
 
     private void Awake()
     {
@@ -23,6 +27,9 @@ public class WireStick : MonoBehaviour
 
         wc.AddPosToRope(anchorPos, true, false);
         holdingWire = true;
+
+        wireStick.sprite = wireStickHolding;
+        wireStickTopLayer.sprite = wireStickHoldingTopLayer;
         //Debug.Log("wire stick");
     }
 }

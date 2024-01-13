@@ -8,20 +8,12 @@ public class PressurePlate : MonoBehaviour
     [SerializeField] private bool activated;
 
     [SerializeField] private GameObject activationLight;
-    [SerializeField] private SpriteRenderer activationIndicator;
-    [SerializeField] private Color colorActive;
-    [SerializeField] private Color colorInactive;
-    private Vector2 defaultButtonPos = new Vector2(0, 0.15f);
-    private Vector2 pressedButtonPos;
-    [SerializeField] private Transform button;
 
     [SerializeField] private GameObject gameObjectToActivate;
+    [SerializeField] private SpriteRenderer buttonSprite;
+    [SerializeField] private Sprite buttonOn;
+    [SerializeField] private Sprite buttonOff;
 
-    private void Awake()
-    {
-        if(!activated) defaultButtonPos = button.localPosition;
-        pressedButtonPos = new Vector2(0, button.localPosition.y - 0.1f);
-    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -42,9 +34,8 @@ public class PressurePlate : MonoBehaviour
     {
         if(activated) return;
         activated = true;
-        activationIndicator.color = colorActive;
+        buttonSprite.sprite = buttonOn;
         activationLight.SetActive(true);
-        button.localPosition = pressedButtonPos;
 
         if(gameObjectToActivate != null) gameObjectToActivate.SendMessage("OnActivate");
     }
@@ -53,9 +44,8 @@ public class PressurePlate : MonoBehaviour
     {
         if(!activated) return;
         activated = false;
-        activationIndicator.color = colorInactive;
+        buttonSprite.sprite = buttonOff;
         activationLight.SetActive(false);
-        button.localPosition = defaultButtonPos;
 
         if(gameObjectToActivate != null) gameObjectToActivate.SendMessage("OnDeactivate");
     }

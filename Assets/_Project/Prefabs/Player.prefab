@@ -542,7 +542,8 @@ MonoBehaviour:
   deathExplosion: {fileID: 2426540659901297264}
   visual: {fileID: 1224799385297066309}
   wheelParticles: {fileID: 3206843191487357830}
-  jetpackFuel: Infinity
+  maxJetpackFuel: 2
+  jetpackFuel: 2
   jetpackForce: 60
   jetpackEnabled: 0
   maxSpeed: 20
@@ -561,7 +562,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 1088
   onGround: 0
   onWall: 0
   onRightWall: 0
