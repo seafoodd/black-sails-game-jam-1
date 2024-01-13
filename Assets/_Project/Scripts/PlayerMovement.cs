@@ -70,6 +70,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject visual;
     private bool dead;
     [SerializeField] private ParticleSystem wheelParticles;
+    [SerializeField] private float maxJetpackFuel;
     [SerializeField] private float jetpackFuel;
     [SerializeField] private float jetpackForce;
     [SerializeField] private bool jetpackEnabled;
@@ -199,6 +200,7 @@ public class PlayerMovement : MonoBehaviour
         if (coll.onGround && !groundTouch)
         {
             GroundTouch();
+            jetpackFuel = maxJetpackFuel;
             jumpBufferAvailable = true;
             groundTouch = true;
         }

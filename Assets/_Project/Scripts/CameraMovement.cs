@@ -19,9 +19,12 @@ public class CameraMovement : MonoBehaviour
     private void Start()
     {
         Camera cam = Camera.main;
-        float height = 2f * cam.orthographicSize;
-        float width = height * cam.aspect;
-        
+        //float height = 2f * cam.orthographicSize;
+        //float width = height * cam.aspect;
+        float width = 32f;
+        float height = 18f;
+
+        Debug.Log($"width: {width}, height: {height}");
         target = GameObject.Find("Player").transform;
         topLeftMapCorner = GameObject.Find("Top Left Map Corner").transform;
         bottomRightMapCorner = GameObject.Find("Bottom Right Map Corner").transform;

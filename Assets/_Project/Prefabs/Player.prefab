@@ -367,7 +367,7 @@ Transform:
   - {fileID: 5367013500492799731}
   - {fileID: 5343119743850778464}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &8159750582786873160
 Rigidbody2D:
@@ -518,6 +518,20 @@ MonoBehaviour:
   - {fileID: 8300000, guid: db106d73f0342e44f9841d6f02036432, type: 3}
   - {fileID: 8300000, guid: 0bf9c70dcb6d87f4a81926a9301c71b5, type: 3}
   - {fileID: 8300000, guid: 6ececf2a3d6bf954a80292fa1771de97, type: 3}
+  jetpackSounds:
+  - {fileID: 8300000, guid: 24de959e18ada424098fda5b3db1f4e6, type: 3}
+  - {fileID: 8300000, guid: 435f30deca0bc4f4da1d1968b034aa9f, type: 3}
+  - {fileID: 8300000, guid: 71c392e673c5f5b4f9f22522c8145aee, type: 3}
+  - {fileID: 8300000, guid: 60444baf2e6b5d64cbad754da859c936, type: 3}
+  - {fileID: 8300000, guid: cdc4834988ab597468fcdbc7afd09daf, type: 3}
+  - {fileID: 8300000, guid: d5785103af099fe40853ec5284bcad8f, type: 3}
+  - {fileID: 8300000, guid: d58df63a745931f45ba8e64a4d1e53ea, type: 3}
+  - {fileID: 8300000, guid: e09e02a10f5c38b4f8539dd251bddaee, type: 3}
+  - {fileID: 8300000, guid: d5bc35552e2c869448fce491a48c9154, type: 3}
+  - {fileID: 8300000, guid: 0a592d7a5c1da6644b5c3663aac71895, type: 3}
+  - {fileID: 8300000, guid: 968871c853f23fc4496b854466286f8c, type: 3}
+  - {fileID: 8300000, guid: 83645dbc758459d4b87f2e71be37afe2, type: 3}
+  - {fileID: 8300000, guid: e7997703e76cfaf4aa1fe37a0a139c55, type: 3}
   jumpBufferAvailable: 0
   canMove: 1
   walking: 0
@@ -532,6 +546,7 @@ MonoBehaviour:
   jetpackForce: 60
   jetpackEnabled: 0
   maxSpeed: 20
+  timeBetweenJetpackSounds: 0.15
 --- !u!114 &2142019835205778737
 MonoBehaviour:
   m_ObjectHideFlags: 0
