@@ -34,10 +34,13 @@ public class PlayerMovement : MonoBehaviour
     [Header("Audio Effects")]
     [SerializeField] private AudioSource aud;
     [SerializeField] private AudioSource aud2;
+    [SerializeField] private AudioSource aud3;
     [SerializeField] private AudioClip jumpSound;
     [SerializeField] private AudioClip dashSound;
     [SerializeField] private AudioClip[] walkSounds;
+    [SerializeField] private AudioClip wheelSound;
     [SerializeField] private AudioClip[] jetpackSounds;
+    [SerializeField] private AudioClip jetpackSound;
 
   
     [Space]
@@ -120,9 +123,14 @@ public class PlayerMovement : MonoBehaviour
             ReloadScene();
         }
 
-        if(walking && !startedWalking && !aud.isPlaying)
+        if(walking && !startedWalking/* && !aud2.isPlaying*/)
         {
             startedWalking = true;
+            aud2.DOKill();
+
+            aud2.DOFade(.05f, .5f);
+            //aud2.Stop();
+            Debug.Log($"play walking sound");
             InvokeRepeating("PlayWalkingSound", 0f, timeBetweenSteps);
             wheelParticles.enableEmission = true;
         }
@@ -137,12 +145,14 @@ public class PlayerMovement : MonoBehaviour
             //wallJumped = false;
             GetComponent<BetterJumping>().enabled = true;
 
-            if(xRaw != 0) walking = true;
+            if(xRaw != 0 || rb.velocity.x > .2f) walking = true;
             else
             {
                 walking = false;
                 startedWalking = false;
                 CancelInvoke("PlayWalkingSound");
+                aud2.DOKill();
+                aud2.DOFade(0f, .25f);
                 wheelParticles.enableEmission = false;
             }
         }
@@ -150,6 +160,8 @@ public class PlayerMovement : MonoBehaviour
         {
             walking = false;
             startedWalking = false;
+            aud2.DOKill();
+            aud2.DOFade(0f, .25f);
             CancelInvoke("PlayWalkingSound");
             wheelParticles.enableEmission = false;
         }
@@ -184,15 +196,19 @@ public class PlayerMovement : MonoBehaviour
         }
         if(Input.GetButtonDown("Jump") && !coll.onGround && jetpackFuel > 0)
         {
-            InvokeRepeating("PlayJetpackSound", 0f, timeBetweenJetpackSounds);
+            aud3.DOKill();
+            aud3.DOFade(0.06f, .5f);
+            //InvokeRepeating("PlayJetpackSound", 0f, timeBetweenJetpackSounds);
+            aud3.PlayOneShot(jetpackSound);
             anim.SetBool("jetpack", true);
             jetpackEnabled = true;
         }
 
         if((!Input.GetButton("Jump") || jetpackFuel <= 0 || coll.onGround) && !walking)
         {
-            CancelInvoke("PlayJetpackSound");
-            aud2.Stop();
+            //CancelInvoke("PlayJetpackSound");
+            //aud3.DOKill();
+            aud3.DOFade(0f, .5f);
             anim.SetBool("jetpack", false);
             jetpackEnabled = false;
         }
@@ -242,18 +258,22 @@ public class PlayerMovement : MonoBehaviour
 
     private void PlayWalkingSound()
     {
-        aud2.volume = 0.05f;
+        //aud2.DOFade(.06f, .5f);
+        Debug.Log($"aud2 volume: {aud2.volume}");
         aud2.pitch = 1.4f;
-        int selectedSound = Random.Range(0, walkSounds.Length);
+        //int selectedSound = Random.Range(0, walkSounds.Length);
         //int selectedWalkSound = 0;
-        if(rb.velocity.magnitude < 1f) return;
-        aud2.PlayOneShot(walkSounds[selectedSound]);
+        //if(rb.velocity.magnitude < 1f) return;
+        //aud2.PlayOneShot(walkSounds[selectedSound]);
+        //if(aud2.isPlaying) return;
+        aud2.PlayOneShot(wheelSound);
         //Debug.Log($"walking sound, {rb.velocity.x}");
     }
 
     private void PlayJetpackSound()
     {
-        aud2.volume = 0.07f;
+        aud2.volume = Mathf.Lerp(aud2.volume, .07f, .4f);
+        //aud2.volume = 0.07f;
         aud2.pitch = 1f;
         int selectedSound = Random.Range(0, jetpackSounds.Length);
         //int selectedWalkSound = 0;

@@ -236,10 +236,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5020900183811969343, guid: 87bfaca354997b845823d2947196e8a6, type: 3}
-      propertyPath: m_SortingOrder
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6624202587203161443, guid: 87bfaca354997b845823d2947196e8a6, type: 3}
       propertyPath: m_Name
       value: Wire
@@ -314,35 +310,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c09e516af446f7f49bc3339014c53350, type: 3}
---- !u!1 &400070049 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4413301227891832784, guid: 9cff4a2d1ec5b1b43b92b2d6d1e44606, type: 3}
-  m_PrefabInstance: {fileID: 1362326370}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &400070054
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 400070049}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ComponentVersion: 1
-  m_AssetsPPU: 200
-  m_RefResolutionX: 1920
-  m_RefResolutionY: 1080
-  m_CropFrame: 0
-  m_GridSnapping: 1
-  m_FilterMode: 0
-  m_UpscaleRT: 0
-  m_PixelSnapping: 0
-  m_CropFrameX: 0
-  m_CropFrameY: 0
-  m_StretchFill: 0
 --- !u!1001 &458533290
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -998,18 +965,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1657225808442494268, guid: 9cff4a2d1ec5b1b43b92b2d6d1e44606, type: 3}
-      propertyPath: m_FocalLength
-      value: 13.563533
-      objectReference: {fileID: 0}
-    - target: {fileID: 1657225808442494268, guid: 9cff4a2d1ec5b1b43b92b2d6d1e44606, type: 3}
-      propertyPath: orthographic size
-      value: 2.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 1657225808442494268, guid: 9cff4a2d1ec5b1b43b92b2d6d1e44606, type: 3}
-      propertyPath: m_projectionMatrixMode
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2771353872693865472, guid: 9cff4a2d1ec5b1b43b92b2d6d1e44606, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -1069,10 +1024,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4413301227891832784, guid: 9cff4a2d1ec5b1b43b92b2d6d1e44606, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 400070054}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9cff4a2d1ec5b1b43b92b2d6d1e44606, type: 3}
 --- !u!1001 &1362524301
 PrefabInstance:
@@ -1429,6 +1381,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2267321236848238666}
   - component: {fileID: 8051881725334780349}
+  - component: {fileID: 8051881725334780350}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -20083,14 +20036,112 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activated: 0
   activationsNeeded: 1
-  defaultClosedPos: {x: 0, y: 0}
-  defaultOpenPos: {x: 0, y: 0}
+  defaultClosedPos: {x: 0, y: 0, z: 0}
+  defaultOpenPos: {x: 0, y: 0, z: 0}
   moveDistance: 3.5
   doorBottom: {fileID: 367376720913915739}
   activationLight: {fileID: 1216297114003572957}
   doorTop: {fileID: 7366862401374402544}
   doorTopOn: {fileID: 21300000, guid: 3ea2436444cc8d144a96c35e8f70acbc, type: 3}
   doorTopOff: {fileID: 21300000, guid: 57dca7a762aa1ba49a4b1c9959aa1330, type: 3}
+  aud: {fileID: 8051881725334780350}
+  openingSound: {fileID: 8300000, guid: 3089ae19d8910a34db0184468030789a, type: 3}
+--- !u!82 &8051881725334780350
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93103103913199248}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: -6449864197144952833, guid: ffea40684a2436e4c8360f389fa33084, type: 2}
+  m_audioClip: {fileID: 8300000, guid: 3089ae19d8910a34db0184468030789a, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!19719996 &8054077109986358927
 TilemapCollider2D:
   m_ObjectHideFlags: 0
