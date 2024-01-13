@@ -23,6 +23,21 @@ public class UIINput : MonoBehaviour
     [SerializeField] private Slider effectsVolumeSlider;
     //private float volume;
 
+    public static UIINput instance;
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void Start()
     {
         if(PlayerPrefs.HasKey("mainVolume") && PlayerPrefs.HasKey("musicVolume") && PlayerPrefs.HasKey("effectsVolume")) LoadVolume();

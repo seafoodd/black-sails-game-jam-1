@@ -73,19 +73,23 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jetpackForce;
     [SerializeField] private bool jetpackEnabled;
     [SerializeField] private float maxSpeed;
+    private string currentSceneName;
+    private bool animationPlaying;
 
-    void Start()
+    void Awake()
     {
+        currentSceneName = SceneManager.GetActiveScene().name;
+
         coll = GetComponent<Collision>();
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<AnimationScript>();
 
         rb.gravityScale = 2.5f;
     }
-    
+
     void Update()
     {
-        if(dead) return;
+        if(dead || animationPlaying) return;
 
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
@@ -417,6 +421,25 @@ public class PlayerMovement : MonoBehaviour
         rb.gravityScale = 0;
         Invoke("Explode", 0);
     }
+    public void OnAnimationPlaying(float time = 1)
+    {
+        if(animationPlaying)
+            return;
+        animationPlaying = true;
+        //DOVirtual.Float(rb.rotation, rb.rotation - side * 90, .5f, PlayerRotation);
+        float x = 0;
+        float y = 0;
+        float xRaw = 0;
+        float yRaw = 0;
+        dir = Vector2.zero;
+        rb.velocity = Vector2.zero;
+        Invoke("StopAnimation", time);
+    }
+
+    private void StopAnimation()
+    {
+        animationPlaying = false;
+    }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -439,7 +462,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void ReloadScene()
     {
-        string currentSceneName = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(currentSceneName);
     }
 
