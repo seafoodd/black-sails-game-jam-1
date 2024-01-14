@@ -18,6 +18,8 @@ public class Door : MonoBehaviour
     [SerializeField] private Sprite doorTopOff;
     [SerializeField] private AudioSource aud;
     [SerializeField] private AudioClip openingSound;
+    [SerializeField] private AudioClip shakingSound;
+    private bool opening;
 
     private void Awake()
     {
@@ -44,11 +46,34 @@ public class Door : MonoBehaviour
             //GetComponent<SpriteRenderer>().color = Color.green;
             doorTop.sprite = doorTopOn;
             activationLight.SetActive(true);
-            //doorBottom.DOShakePosition(1, .1f, 100);
-            doorBottom.DOMove(defaultOpenPos, 1f);
-            aud.PlayOneShot(openingSound, .15f);
+            if(Mathf.Abs(doorBottom.position.magnitude - defaultClosedPos.magnitude) < .005f)
+            {
+                opening = true;
+                aud.PlayOneShot(shakingSound, .3f);
+                doorBottom.DOShakePosition(.75f, .1f, 100);
+                Invoke("OpenDoor", .75f);
+            }
+            else
+            {
+                OpenDoor();
+            }
+            //doorBottom.DOMove(defaultOpenPos, 1f);
+            //aud.PlayOneShot(openingSound, .15f);
 
         }
+    }
+
+    private void OpenDoor()
+    {
+        //Invoke("StopOpening", 1f);
+        opening = false;
+        doorBottom.DOMove(defaultOpenPos, 1f);
+        aud.PlayOneShot(openingSound, .15f);
+    }
+
+    private void StopOpening()
+    {
+        opening = false;
     }
 
     private void OnDeactivate()
@@ -58,9 +83,30 @@ public class Door : MonoBehaviour
         if(activated < activationsNeeded)
         {
             //GetComponent<SpriteRenderer>().color = Color.red;
+            if(opening)
+            {
+                CancelInvoke("OpenDoor");
+                doorTop.sprite = doorTopOff;
+                activationLight.SetActive(false);
+                doorBottom.DOMove(defaultClosedPos, 1f);
+            }
+            else
+            {
+                doorTop.sprite = doorTopOff;
+                activationLight.SetActive(false);
+                doorBottom.DOMove(defaultClosedPos, 1f);
+            }
+        }
+    }
+
+    /*private void OnDeactivateWhileClosing()
+    {
+        //if(activated >= activationsNeeded) return;
+        if(activated < activationsNeeded)
+        {
             doorTop.sprite = doorTopOff;
             activationLight.SetActive(false);
             doorBottom.DOMove(defaultClosedPos, 1f);
         }
-    }
+    }*/
 }

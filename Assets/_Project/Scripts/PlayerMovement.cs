@@ -73,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject visual;
     private bool dead;
     [SerializeField] private ParticleSystem wheelParticles;
+    [SerializeField] private ParticleSystem jumpParticles;
     [SerializeField] private float maxJetpackFuel;
     [SerializeField] private float jetpackFuel;
     [SerializeField] private float jetpackForce;
@@ -126,8 +127,8 @@ public class PlayerMovement : MonoBehaviour
         if(walking && !startedWalking/* && !aud2.isPlaying*/)
         {
             startedWalking = true;
+            aud2.volume = 0f;
             aud2.DOKill();
-
             aud2.DOFade(.05f, .5f);
             //aud2.Stop();
             Debug.Log($"play walking sound");
@@ -196,8 +197,10 @@ public class PlayerMovement : MonoBehaviour
         }
         if(Input.GetButtonDown("Jump") && !coll.onGround && jetpackFuel > 0)
         {
+            aud3.volume = 0f;
+            aud3.Stop();
             aud3.DOKill();
-            aud3.DOFade(0.06f, .5f);
+            aud3.DOFade(0.08f, .5f);
             //InvokeRepeating("PlayJetpackSound", 0f, timeBetweenJetpackSounds);
             aud3.PlayOneShot(jetpackSound);
             anim.SetBool("jetpack", true);
@@ -270,7 +273,7 @@ public class PlayerMovement : MonoBehaviour
         //Debug.Log($"walking sound, {rb.velocity.x}");
     }
 
-    private void PlayJetpackSound()
+    /*private void PlayJetpackSound()
     {
         aud2.volume = Mathf.Lerp(aud2.volume, .07f, .4f);
         //aud2.volume = 0.07f;
@@ -279,7 +282,7 @@ public class PlayerMovement : MonoBehaviour
         //int selectedWalkSound = 0;
         aud2.PlayOneShot(jetpackSounds[selectedSound]);
         //Debug.Log($"walking sound, {rb.velocity.x}");
-    }
+    }*/
 
     private void ResetJumpBuffer()
     {
@@ -407,6 +410,12 @@ public class PlayerMovement : MonoBehaviour
         Invoke("ResetJump", .5f);
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.velocity += dir * jumpForce;
+        var emitParams = new ParticleSystem.EmitParams();
+        emitParams.startColor = Color.grey;
+        emitParams.startSize = .1f;
+        //jumpParticles.Emit(emitParams, 50);
+        jumpParticles.Play();
+        Invoke("StopJumpParticles", .5f);
 
         aud.Stop();
         /*if(wall)
@@ -423,6 +432,11 @@ public class PlayerMovement : MonoBehaviour
         aud.PlayOneShot(jumpSound);
 
         //particle.Play();
+    }
+
+    private void StopJumpParticles()
+    {
+        jumpParticles.Stop();
     }
 
     private void ResetJump()

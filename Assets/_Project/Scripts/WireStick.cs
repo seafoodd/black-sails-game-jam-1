@@ -13,6 +13,8 @@ public class WireStick : MonoBehaviour
     [SerializeField] private SpriteRenderer wireStickTopLayer;
     [SerializeField] private Sprite wireStickHolding;
     [SerializeField] private Sprite wireStickHoldingTopLayer;
+    [SerializeField] private AudioSource aud;
+    [SerializeField] private AudioClip snapSound;
 
     private void Awake()
     {
@@ -30,6 +32,8 @@ public class WireStick : MonoBehaviour
 
         wireStick.sprite = wireStickHolding;
         wireStickTopLayer.sprite = wireStickHoldingTopLayer;
+
+        aud.PlayOneShot(snapSound, .15f);
         //Debug.Log("wire stick");
     }
 }
